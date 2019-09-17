@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+{% block content %}
+    <h1>{{ company.name }}</h1>
+    <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <button class="btn btn-primary" type="submit">Give</button>
+                    <small class="text-muted">{{ company.date_posted|date:"F d, Y" }}</small>
+                    <h2>cash : {{ company.price }} $</h2>
+                    <h3> date of end : {{ company.date_of_end|date:"F d, Y" }}</h3>
+                </div>
+                  <img src="{{ company.image }}" class="card-img-top" alt="Company image">
+                <p class="article-content">{{ company.description }}</p>
+                <h2>Bonuses</h2>
+                {% for bonus in bonuses %}
+                    <h3>name bonus: {{ bonus.name }}</h3>
+                    <h2>price: {{ bonus.price }}</h2>
+                    <p>{{ bonus.description_of_bonus }}</p>
+                {% endfor %}
+            </div>
+        </article>
+{% endblock %}

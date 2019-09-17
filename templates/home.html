@@ -1,0 +1,39 @@
+<!-- templates/home.html -->
+{% extends 'index.html' %}
+{% if title %}
+    <title>{{ title }}</title>
+{% else %}
+    <title>Blog</title>
+{% endif %}
+{% block content %}
+{% if user.is_authenticated %}
+    <h1>Hi, {{ user.username }}!</h1>
+{% else %}
+    <p>You are not logged in</p>
+{% endif %}
+    <div>
+        <h1>Cashed - it's craudfanding</h1></div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      TOP
+    </div>
+    <div class="col-sm">
+      NEW
+    </div>
+  </div>
+
+</div>
+    {% for company in companys %}
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="user">{{ company.author }}</a>
+                    <small class="text-muted">{{ company.date_posted|date:"F d, Y" }}</small>
+                </div>
+                <h2 class="article-title"><a class="mr-2" href="company/<int:company_id>">{{ company.name }}</a></h2>
+                <p class="article-content">{{ company.description }}</p>
+            </div>
+        </article>
+    {% endfor %}
+{% endblock %}
