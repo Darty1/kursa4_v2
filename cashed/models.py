@@ -1,6 +1,7 @@
+import self as self
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.utils import timezone
 
 # Create your models here.
 
@@ -25,22 +26,29 @@ class Priced(models.Model):
 class City(models.Model):
     class Meta:
         abstract = True
+
     city = models.CharField(max_length=100)
 
 
-class Bonus(Named, Priced, City):
-    img = models.ImageField(upload_to='companys', null=True)
-    description_of_bonus = models.TextField(null=True)
-    date = models.DateField(null=True)
-    count = models.IntegerField(max_length=None, null=True)
-
+class Category(Named):
+    pass
 
 class Company(Named, Priced):
-    image = models.ImageField(upload_to='companys', null=True)
+    image = models.ImageField(upload_to='images/', null=True)
     description = models.TextField(null=True)
     date_of_end = models.DateTimeField(null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    bonus = models.ForeignKey(Bonus, on_delete=models.CASCADE, null=True)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True)
+    # bonus = models.ManyToManyField(Bonus)
+
+
+class Bonus(Named, Priced, City):
+    img = models.ImageField(upload_to='images/', null=True)
+    description_of_bonus = models.TextField(null=True)
+    date = models.DateField(null=True)
+    count = models.IntegerField(max_length=None, null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
+
 
 class Consumer(models.Model):
     class Meta(User.Meta):

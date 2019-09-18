@@ -7,3 +7,5 @@ from .models import *
 admin.site.register(Company)
 admin.site.register(Consumer)
 admin.site.register(Bonus)
+admin.site.register(Category)
+

@@ -4,15 +4,17 @@ from django.http import HttpResponse, HttpRequest, Http404
 from django.urls import reverse
 from django.views import View
 from .models import *
+from django.utils import timezone
 
 
 def index(request: HttpRequest):
     companys = Company.objects.all()
-    return render(request, 'home.html', {'companys': companys})
+    categorys = Category.objects.all()
+    return render(request, 'home.html', {'companys': companys, 'categorys': categorys})
 
 
-def user_view(request):
-    users = User.objects.get(pk=request.user.id)
+def user_view(request, user_id: int):
+    users = User.objects.get(pk=user_id)
     return render(request, 'user.html', {'users': users})
 
 
@@ -22,19 +24,28 @@ def logout(request: HttpRequest):
     return redirect(reverse('index'))
 
 
-def show(request):
-    companys = Company.objects.all()
-    return render(request, 'show.html', {'companys': companys})
+def show(request, category_id: int):
+    companys = Company.objects.filter(category_id=category_id)
+    categorys = Category.objects.all()
+    return render(request, 'show.html', {'companys': companys, 'categorys': categorys})
+
+
+def show_all(request):
+    companys = Company.objects.all
+    categorys = Category.objects.all()
+    return render(request, 'show.html', {'companys': companys, 'categorys': categorys})
 
 
 def company(request: HttpRequest, company_id: int):
     from django.db.models import ObjectDoesNotExist
     try:
         company = Company.objects.get(pk=company_id)
-        bonuses = Bonus.objects.all()
+        bonuses = Bonus.objects.filter(company=company_id).values()
+        categorys = Category.objects.all()
     except ObjectDoesNotExist:
         return Http404()
-    return render(request, 'company.html', {'company': company, 'bonuses': bonuses})
+    day_of_end = timezone.timedelta(company.date_of_end.day)
+    return render(request, 'company.html', {'company': company, 'bonuses': bonuses, 'day_of_end': day_of_end, 'categorys': categorys})
 
 
 class LoginView(View):
@@ -46,15 +57,13 @@ class LoginView(View):
         from django.contrib.auth import authenticate, login
         from django.contrib.auth.models import User
         from .forms import UserForm
-
         form = UserForm(request.POST)
-        if not form.is_valid():
-            return render(request, 'registrable/login.html', {'form': UserForm(), 'error': True})
+
         user: User = authenticate(request, username=form.username, password=form.password)
-        # if not user:
-        #     return render(request, 'registrable/login.html', {'form': UserForm(), 'error': True})
+        if not user:
+            return render(request, 'home.html', {'form': UserForm(), 'error': True})
         login(request, user)
-        return redirect('index')
+        return redirect(reverse('index'))
 
 
 class RegisterView(View):
@@ -73,8 +82,21 @@ class RegisterView(View):
         try:
             username = form.data['username']
             password = form.data['password']
-            user = Consumer.objects.create_user(username, password=password)
+            user = User.objects.create_user(username=username, password=password)
         except:
             return render(request, 'registrable/register.html', {'form': UserForm(), 'error': True})
         login(request, user)
         return redirect(reverse('index'))
+
+
+class Paid_View(View):
+    def pay_st1(request):
+        from .forms import PaidForm_st_1
+
+        return render(request, 'pay_st1.html', {'form': PaidForm_st_1()})
+
+    def pay_st2(request):
+        from .forms import PaidForm_st_2
+        return render(request, 'pay_st_2.html', {'form': PaidForm_st_2()})
+
+
