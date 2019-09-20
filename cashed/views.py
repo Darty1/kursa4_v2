@@ -13,39 +13,40 @@ def index(request: HttpRequest):
     return render(request, 'home.html', {'companys': companys, 'categorys': categorys})
 
 
-def user_view(request, user_id: int):
-    users = User.objects.get(pk=user_id)
-    return render(request, 'user.html', {'users': users})
-
-
 def logout(request: HttpRequest):
     from django.contrib.auth import logout
     logout(request)
     return redirect(reverse('index'))
 
 
-def show(request, category_id: int):
-    companys = Company.objects.filter(category_id=category_id)
-    categorys = Category.objects.all()
-    return render(request, 'show.html', {'companys': companys, 'categorys': categorys})
-
-
-def show_all(request):
-    companys = Company.objects.all
-    categorys = Category.objects.all()
-    return render(request, 'show.html', {'companys': companys, 'categorys': categorys})
-
-
-def company(request: HttpRequest, company_id: int):
-    from django.db.models import ObjectDoesNotExist
-    try:
-        company = Company.objects.get(pk=company_id)
-        bonuses = Bonus.objects.filter(company=company_id).values()
+class Show(View):
+    def show(request, category_id: int):
+        companys = Company.objects.filter(category_id=category_id)
         categorys = Category.objects.all()
-    except ObjectDoesNotExist:
-        return Http404()
-    day_of_end = timezone.timedelta(company.date_of_end.day)
-    return render(request, 'company.html', {'company': company, 'bonuses': bonuses, 'day_of_end': day_of_end, 'categorys': categorys})
+        return render(request, 'show.html', {'companys': companys, 'categorys': categorys})
+
+    def show_all(request):
+        companys = Company.objects.all
+        categorys = Category.objects.all()
+        return render(request, 'show.html', {'companys': companys, 'categorys': categorys})
+
+    def company(request: HttpRequest, company_id: int):
+        from django.db.models import ObjectDoesNotExist
+        try:
+            company = Company.objects.get(pk=company_id)
+            bonuses = Bonus.objects.filter(company=company_id).values()
+            categorys = Category.objects.all()
+        except ObjectDoesNotExist:
+            return Http404()
+        day_of_end = timezone.timedelta(company.date_of_end.day)
+        return render(request, 'company.html',
+                      {'company': company, 'bonuses': bonuses, 'day_of_end': day_of_end, 'categorys': categorys})
+
+    def user_view(request, user_id: int):
+        users = User.objects.get(pk=user_id)
+        categorys = Category.objects.all()
+        companys = Company.objects.filter(author_id=users.id).values()
+        return render(request, 'user.html', {'users': users, 'companys': companys, 'categorys': categorys})
 
 
 class LoginView(View):
@@ -92,11 +93,10 @@ class RegisterView(View):
 class Paid_View(View):
     def pay_st1(request):
         from .forms import PaidForm_st_1
-
-        return render(request, 'pay_st1.html', {'form': PaidForm_st_1()})
+        categorys = Category.objects.all()
+        return render(request, 'pay_st1.html', {'form': PaidForm_st_1(), 'categorys': categorys})
 
     def pay_st2(request):
         from .forms import PaidForm_st_2
-        return render(request, 'pay_st_2.html', {'form': PaidForm_st_2()})
-
-
+        categorys = Category.objects.all()
+        return render(request, 'pay_st_2.html', {'form': PaidForm_st_2(), 'categorys': categorys})

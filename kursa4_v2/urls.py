@@ -26,14 +26,18 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name='login'),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('logout/', views.logout, name='logout'),
-    path('compa ny/<int:company_id>', views.company, name='company'),
-    path('show/company/<int:company_id>', views.company, name='company'),
-    path('user/<int:user_id>', views.user_view, name='user'),
+    path('company/<int:company_id>', views.Show.company, name='company'),
+    path('show/company/<int:company_id>', views.Show.company, name='company'),
+    path('user/company/<int:company_id>', views.Show.company, name='company'),
+    path('user/<int:user_id>', views.Show.user_view, name='user'),
     path('show/company/pay_st_1', views.Paid_View.pay_st1, name='pay_st_1'),
+    path('user/company/pay_st_1', views.Paid_View.pay_st1, name='pay_st_1'),
     path('show/company/pay_st_2', views.Paid_View.pay_st2, name='pay_st_2'),
-    path('show/<int:category_id>', views.show, name='show'),
-    path('show/', views.show_all, name='show'),
+    path('user/company/pay_st_2', views.Paid_View.pay_st2, name='pay_st_2'),
+    path('show/<int:category_id>', views.Show.show, name='show'),
+    path('user/show/', views.Show.show, name='show'),
+    path('show/', views.Show.show_all, name='show'),
 ]
 
-if settings.DEBUG: # new
+if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

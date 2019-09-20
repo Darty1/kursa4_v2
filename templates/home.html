@@ -11,17 +11,53 @@
 {#{% else %}#}
 {#    <p>You are not logged in</p>#}
 {#{% endif %}#}
-    <h1>Cashed - it's craudfanding</h1>
+    <h1 align="center"> Cashed - it's craudfanding</h1>
+    <div class="row">
+        <div class="col">
+            <h1 align="center"> top </h1>
+            <div class="row">
     {% for company in companys %}
-        <article class="media content-section">
-            <div class="media-body">
-                <div class="article-metadata">
-                    <a class="mr-2" href="user">{{ company.author }}</a>
-                    <small class="text-muted">{{ company.date_posted|date:"F d, Y" }}</small>
-                </div>
-                <h2 class="article-title"><a class="mr-2" href="company/{{ company.id }}">{{ company.name }}</a></h2>
-                <p class="article-content">{{ company.description }}</p>
+        <div class="col" align="center">
+            <div class="card" style="width: 18rem; height: 25rem;">
+                <img src="{{ company.image.url }}" height="200px" width="250px" class="card-img-top" alt="Company image">
+                 <div class="card-body">
+                     <div class="row">
+                         <div class="col">
+                                <h5 class="card-title"><a href="company/{{ company.id }}">{{ company.name }}</a></h5>
+                        </div>
+                         <div class="col">
+                             <p class="card-text">{{ company.price }} $</p>
+                         </div>
+                     </div>
+                     <p class="card-text"> {{ company.date_of_end }}</p>
+                     <a href="company/{{ company.id }}" class="btn btn-primary">Go somewhere</a>
+                 </div>
             </div>
-        </article>
+        </div>
     {% endfor %}
+</div>
+        </div>
+        <div class="col">
+            <h1 align="center"> new </h1>
+            {% for company in companys %}
+            <div class="col" align="center">
+                <div class="card" style="width: 18rem; height: 25rem;">
+                    <img src="{{ company.image.url }}" height="200px" width="250px" class="card-img-top" alt="Company image">
+                     <div class="card-body">
+                         <div class="row">
+                             <div class="col">
+                                    <h5 class="card-title"><a href="company/{{ company.id }}">{{ company.name }}</a></h5>
+                            </div>
+                             <div class="col">
+                                 <p class="card-text">{{ company.price }} $</p>
+                             </div>
+                         </div>
+                         <p class="card-text"> {{ company.date_of_end }}</p>
+                         <a href="company/{{ company.id }}" class="btn btn-primary">Go somewhere</a>
+                     </div>
+                </div>
+            </div>
+        {% endfor %}
+            </div>
+    </div>
 {% endblock %}
