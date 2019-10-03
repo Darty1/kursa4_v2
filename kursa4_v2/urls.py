@@ -13,31 +13,31 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from cashed import views
+from django.utils.translation import gettext_lazy as _
 from django.conf.urls.static import static
-
 from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('login/', views.LoginView.as_view(), name='login'),
-    path('register/', views.RegisterView.as_view(), name='register'),
-    path('logout/', views.logout, name='logout'),
-    path('company/<int:company_id>', views.Show.company, name='company'),
-    path('show/company/<int:company_id>', views.Show.company, name='company'),
-    path('user/company/<int:company_id>', views.Show.company, name='company'),
-    path('user/<int:user_id>', views.Show.user_view, name='user'),
-    path('show/company/pay_st_1', views.Paid_View.pay_st1, name='pay_st_1'),
-    path('user/company/pay_st_1', views.Paid_View.pay_st1, name='pay_st_1'),
-    path('show/company/pay_st_2', views.Paid_View.pay_st2, name='pay_st_2'),
-    path('user/company/pay_st_2', views.Paid_View.pay_st2, name='pay_st_2'),
-    path('show/<int:category_id>', views.Show.show, name='show'),
-    path('user/show/', views.Show.show, name='show'),
+    re_path(r'login/$', views.LoginView.as_view(), name='login'),
+    re_path(r'register/$', views.RegisterView.as_view(), name='register'),
+    re_path(r'logout/', views.logout, name='logout'),
+    re_path(r'^(\w+/)*company/(?P<company_id>[0-9]+)/$', views.Show.company, name='company'),
+    re_path(r'user/(?P<user_id>[0-9]+)/$', views.Show.user_view, name='user'),
+    re_path(r'^(\w+/)*(?P<user_id>[0-9]+)/(\w+/)*(?P<company_id>[0-9]+)/pay_st_1/$', views.Paid_View.pay_st1,
+            name='pay_st_1'),
+    re_path(r'^(\w+/)*(?P<user_id>[0-9]+)/(\w+/)*(?P<company_id>[0-9]+)/(\w+/)*pay_st_2/$', views.Paid_View.pay_st2,
+            name='pay_st_2'),
+    path('user/<int:user_id>/', views.Show.user_view, name='user'),
+    re_path(r'user/(?P<user_id>[0-9]+)/new/$', views.new, name='new'),
+    re_path(r'^(\w+/)*show/(?P<category_id>[0-9]+)/$', views.Show.show, name='show'),
     path('show/', views.Show.show_all, name='show'),
+    re_path(r'(\w+/)*user_update/(?P<pk>[0-9]+)/$', views.UserUpdate.as_view(), name='user_update'),
 ]
-
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

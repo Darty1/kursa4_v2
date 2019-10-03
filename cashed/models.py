@@ -33,10 +33,11 @@ class City(models.Model):
 class Category(Named):
     pass
 
+
 class Company(Named, Priced):
     image = models.ImageField(upload_to='images/', null=True)
     description = models.TextField(null=True)
-    date_of_end = models.DateTimeField(null=True)
+    date_of_end = models.DateField(null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True)
     # bonus = models.ManyToManyField(Bonus)

@@ -9,7 +9,7 @@
                      <article class="media content-section">
             <div class="media-body">
                 <div class="article-metadata">
-                    <h6 align="center"> day of end : {{ day_of_end}}</h6>
+                    <h6 align="center"> day of end : {{ day_of_end }}</h6>
                 </div>
                   <img src="{{ company.image.url }}" class="card-img-top" alt="Company image">
             </div>
@@ -17,7 +17,7 @@
                 </div>
                 <div class="col">
                     <h2> {{ company.price }} $</h2>
-                    <form action="{% url 'pay_st_1' %}" method="post">
+                    <form action="{% url 'pay_st_1' user.id company.id%}" method="post">
                         <a href="pay_st_1"><button class="btn btn-primary" type="button">Give</button></a>
                     </form>
                     <div>

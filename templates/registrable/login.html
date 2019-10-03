@@ -3,7 +3,9 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h2>Login</h2>
+
+    <div class="container" style="width: 300px">
+    <h2 align="center">Login</h2>
  <form action="{% url 'login' %}" method="post">
                 <div class="form-group">
                     <label for="input-username">Username</label>
@@ -15,10 +17,13 @@
                     <label for="input-password">Password</label>
                     {{ form.password }}
                 </div>
+
                 <button type="submit" class="btn btn-primary">Login</button>
                 {% csrf_token %}
  </form>
-    if you don't have account <a href="register.html" target="blank"><strong>Register</strong></a>
+        if you don't have account <a href="register" target="blank"><strong>Register</strong></a>
+    </div>
+
 {% endblock %}
 
 
