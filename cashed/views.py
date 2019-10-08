@@ -190,8 +190,8 @@ def pay_final(request, user_id, company_id):
 
 class UserUpdate(UpdateView):
     model = User
-    fields = ['first_name', 'last_name', 'email', 'password']
+    fields = ['first_name', 'last_name', 'email']
     template_name_suffix = '_update'
 
     def get_success_url(self):
-        return reverse('show')
+        return reverse('index')
