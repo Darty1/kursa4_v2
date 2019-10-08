@@ -6,6 +6,9 @@
             <div class="row">
                 <div class="col">
                     <h1 align="center">{{ company.name }} </h1>
+                    {% if company.author_id is user.id %}
+                    <p align="center"><a href="company_update/{{ company.id }}">Edit</a></p>
+                    {% endif %}
                      <article class="media content-section">
             <div class="media-body">
                 <div class="article-metadata">
@@ -18,7 +21,7 @@
                 <div class="col">
                     <h2> {{ company.price }} $</h2>
                     <form action="{% url 'pay_st_1' user_id=user.id company_id=company.id %}" method="post">
-                        <button type="submit" class="btn btn-primary">Give</button>
+                        <button style="align-self: center" type="submit" class="btn btn-primary">Give</button>
                         {% csrf_token %}
                     </form>
                     <div>
@@ -32,7 +35,7 @@
         <div class="col-sm-4">
         {% if company.author_id is user.id  %}
             <form action="{% url 'add_bonus' company_id=company.id %}" method="post">
-                <button type="submit" class="btn btn-primary">Add Bonus</button>
+               <a href="add_bonus"><button class="btn btn-primary" type="button">Add bonus</button></a>
                 {% csrf_token %}
             </form>
         {% endif %}

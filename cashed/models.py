@@ -39,8 +39,6 @@ class Company(Named, Priced):
     date_of_end = models.DateField(null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True)
-    # bonus = models.ManyToManyField(Bonus)
-
 
 class Bonus(Named, Priced, City):
     img = models.ImageField(upload_to='images/', null=True)

@@ -9,4 +9,5 @@ admin.site.register(Consumer)
 admin.site.register(Bonus)
 admin.site.register(Category)
 admin.site.register(Transaction)
+# admin.site.register(Wish)
 

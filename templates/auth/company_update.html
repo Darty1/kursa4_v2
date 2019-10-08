@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+{% block content %}
+       <div class="container" align="center">
+    <h2 align="center">Edit Company</h2>
+        <div style="width: 300px;">
+            <form method="post">
+                {{ form.as_p }}
+                <input  class="btn btn-primary" type="submit" value="Edit">
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

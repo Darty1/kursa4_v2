@@ -4,9 +4,7 @@
         <div class="col col-lg-3">
             <h3> {{ users.first_name }} {{ users.last_name }} </h3>
             <a href="user_update/{{ user.id }}">Edit</a>
-
             <h5>{{ users.email }}</h5>
-
         </div>
         <div class="col col-lg-5">
             <nav aria-label="breadcrumb">
@@ -60,25 +58,25 @@
     <h2 align="center">SUPPORTED</h2>
       <div class="card card-body" align="center">
         <div class="row">
-    {% for company in companys %}
-        <div class="col">
-            <div class="card" style="width: 25rem; height: 10rem;">
-{#                <img src="{{ company.image.url }}" height="5rem" width="25rem" class="card-img-top" alt="Company image">#}
-                 <div class="card-body">
-                     <div class="row">
-                         <div class="col">
-                                <h5 class="card-title"><a href="company/{{ company.id }}">{{ company.name }}</a></h5>
-                        </div>
-                         <div class="col">
-                             <p class="card-text">{{ company.price }} $</p>
+            {% for company in support_companys %}
+                <div class="col">
+                    <div class="card" style="width: 25rem; height: 10rem;">
+        {#                <img src="{{ company.image.url }}" height="5rem" width="25rem" class="card-img-top" alt="Company image">#}
+                         <div class="card-body">
+                             <div class="row">
+                                 <div class="col">
+                                        <h5 class="card-title"><a href="company/{{ company.id }}">{{ company.name }}</a></h5>
+                                </div>
+                                 <div class="col">
+                                     <p class="card-text">{{ company.price }} $</p>
+                                 </div>
+                             </div>
+                             <p class="card-text"> {{ company.date_of_end }}</p>
+                             <p class="card-text" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"> {{ company.description }} </p>
                          </div>
-                     </div>
-                     <p class="card-text"> {{ company.date_of_end }}</p>
-                     <p class="card-text" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"> {{ company.description }} </p>
-                 </div>
-            </div>
-        </div>
-    {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
 </div>
     </div>
   </div>

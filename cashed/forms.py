@@ -26,9 +26,13 @@ class UserForm(ModelForm):
     username_validator = User.username_validator
 
 
-class PaidForm_st_1(Form):
-    count = DecimalField(widget=NumberInput({'class': 'form-control'}))
-
+class PaidForm_st_1(ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['price']
+        widgets = {
+            'price': NumberInput({'class': 'form-control'})
+        }
 
 class PaidForm_st_2(Form):
     FirstName = CharField(min_length=3, max_length=32, widget=TextInput({'class': 'form-control'}))
@@ -66,7 +70,7 @@ class Create_Company(ModelForm):
 class CreateBonus(ModelForm):
     class Meta:
         model = Bonus
-        fields = ['name', 'price', 'description_of_bonus', 'date']
+        fields = ('name', 'price', 'description_of_bonus', 'date', 'img')
         widgets = {
             'name': TextInput({'class': 'form-control', 'size': 8}),
             'description_of_bonus': TextInput({'class': 'form-control'}),

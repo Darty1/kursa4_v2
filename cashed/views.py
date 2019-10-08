@@ -17,25 +17,27 @@ def index(request: HttpRequest):
 
 def new(request, user_id):
     from .forms import Create_Company
-    form = Create_Company(request.POST)
+    form = Create_Company(request.POST, request.FILES)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-        # name = request.POST.get('name')
-        # price = request.POST.get('price')
-        # author_id = user_id
-        # date_of_end = request.POST.get('date_of_end')
-        # category_id = request.POST.get('category_id')
-        # description = request.POST.get('description')
-        # image = request.POST.get('image')
-        #
-        # company = Company(name=name, price=price, author_id=author_id, date_of_end=date_of_end,
-        #                   category_id=category_id, description=description, image=image)
-        # company.save()
-        users = User.objects.get(pk=user_id)
-        categorys = Category.objects.all()
-        companys = Company.objects.filter(author_id=users.id).values()
-        return render(request, 'user.html', {'users': users, 'companys': companys, 'categorys': categorys})
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+        author_id = user_id
+        date_of_end = request.POST.get('date_of_end')
+        category_id = request.POST.get('category_id')
+        description = request.POST.get('description')
+        # image = request.FILES.get('image')
+        image = request.POST.get('image')
+
+        company = Company(name=name, price=price, author_id=author_id, date_of_end=date_of_end,
+                          category_id=category_id, description=description, image=image)
+        company.save()
+        # users = User.objects.get(pk=user_id)
+        # categorys = Category.objects.all()
+        # companys = Company.objects.filter(author_id=users.id).values()
+        # # return render(request, 'user.html', {'users': users, 'companys': companys, 'categorys': categorys})
+        return redirect(reverse('index'))
     else:
         form = Create_Company()
         categorys = Category.objects.all()
@@ -45,23 +47,24 @@ def new(request, user_id):
 def add_bonus(request, company_id):
     from .forms import CreateBonus
     form = CreateBonus()
+    categorys = Category.objects.all()
     if request.method == 'POST':
-            name = request.POST.get('name')
-            price = request.POST.get('price')
-            description = request.POST.get('description_of_bonus')
-            date = request.POST.get('date')
-            company_id = company_id
-            bonus = Bonus(name=name, price=price, description_of_bonus=description,
-                              date=date, company_id=company_id)
-            bonus.save()
-            company = Company.objects.get(id=company_id)
-            categorys = Category.objects.all()
-            return render(request, 'company.html', {'company': company, 'categorys': categorys, 'form': form})
+        print('i save')
+        print('its valid')
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+        description = request.POST.get('description_of_bonus')
+        date = request.POST.get('date')
+        company_id = company_id
+        bonus = Bonus(name=name, price=price, description_of_bonus=description,
+                          date=date, company_id=company_id)
+        bonus.save()
+        # company = Company.objects.get(id=company_id)
+        return redirect(reverse('index'))
             # return render(request, 'add_bonus.html', {'categorys': categorys,  'form': form})
     else:
         form = CreateBonus()
-        categorys = Category.objects.all()
-    return render(request, 'add_bonus.html', {'categorys': categorys,  'form': form})
+    return render(request, 'add_bonus.html', {'categorys': categorys, 'form': form})
 
 
 def logout(request: HttpRequest):
@@ -89,7 +92,10 @@ class User_view(View):
         users = User.objects.get(pk=user_id)
         categorys = Category.objects.all()
         companys = Company.objects.filter(author_id=users.id).values()
-        return render(request, 'user.html', {'users': users, 'companys': companys, 'categorys': categorys})
+        support_companys = Consumer.objects.get(user_id=user_id)
+        return render(request, 'user.html', {'users': users, 'companys': companys,
+                                             'support_companys': support_companys,
+                                            'categorys': categorys})
 
 
 class Show_Company(View):
@@ -104,6 +110,7 @@ class Show_Company(View):
         day_of_end = timezone.timedelta(company.date_of_end.day)
         return render(request, 'company.html',
                       {'company': company, 'bonuses': bonuses, 'day_of_end': day_of_end, 'categorys': categorys})
+
 
 class LoginView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
@@ -148,24 +155,26 @@ class RegisterView(View):
 
 
 def pay_st1(request, user_id, company_id):
-    from .forms import PaidForm_st_1
+    from .forms import PaidForm_st_1, PaidForm_st_2
     form = PaidForm_st_1(request.POST)
     if request.method == 'POST':
-        price = request.POST.get('count')
-        print('price = ', request.POST.get('count'))
-        # if price is None:
-        #     return redirect(reverse('index'))
-        user = User.objects.get(id=user_id)
-        company = Company.objects.get(id=company_id)
-        transaction = Transaction(user_id=user_id, company_id=company_id, price=price)
-        transaction.save()
-        print('transaction_price = ', transaction.price)
-        categorys = Category.objects.all()
-        form = PaidForm_st_1(request.POST)
-        return render(request, 'pay_st_1.html', {'categorys': categorys, 'form': form, 'error': True,
-                                                 'company': company, 'user': user})
-    else:
-        form = PaidForm_st_1
+        if form.is_valid():
+            price = request.POST.get('price')
+            user = User.objects.get(id=user_id)
+            if Consumer.objects.filter(user_id=user_id):
+                consumer = Consumer.objects.filter(user_id=user_id)
+            else:
+                consumer = Consumer.objects.create(user_id=user_id)
+            consumer.wish_list.create(consumer_id=user_id, company_id=company_id)
+            company = Company.objects.get(id=company_id)
+            transaction = Transaction(user_id=user_id, company_id=company_id, price=price)
+            transaction.save()
+            categorys = Category.objects.all()
+            form = PaidForm_st_2(request.POST)
+            return render(request, 'pay_st_2.html', {'categorys': categorys, 'form': form, 'error': True,
+                                                     'company': company, 'user': user})
+        else:
+            form = PaidForm_st_1()
     categorys = Category.objects.all()
     company = Company.objects.filter(id=company_id)
     user = User.objects.get(id=user_id)
@@ -183,7 +192,10 @@ def pay_st2(request, user_id, company_id):
 def pay_final(request, user_id, company_id):
     company = Company.objects.get(id=company_id)
     transaction = Transaction.objects.get(company_id=company_id, user_id=user_id)
+    print('before company price = ', company.price)
     company.price -= transaction.price
+    print('after company price = ', company.price)
+    company.save()
     transaction.delete()
     return redirect(reverse('index'))
 
@@ -191,6 +203,15 @@ def pay_final(request, user_id, company_id):
 class UserUpdate(UpdateView):
     model = User
     fields = ['first_name', 'last_name', 'email']
+    template_name_suffix = '_update'
+
+    def get_success_url(self):
+        return reverse('index')
+
+
+class CompanyUpdate(UpdateView):
+    model = Company
+    fields = ['name', 'price', 'image', 'description', 'date_of_end', 'category_id']
     template_name_suffix = '_update'
 
     def get_success_url(self):
