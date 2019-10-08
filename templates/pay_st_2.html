@@ -1,0 +1,41 @@
+{% extends 'index.html' %}
+
+{% block title %}Paid{% endblock %}
+
+{% block content %}
+<h2>Paid</h2>
+ <form action="{% url 'pay_final' user_id=user.id company_id=company.id %}" method="post">
+ {% csrf_token %}
+ <div class="row">
+     <div class="col">
+                <div class="form-group">
+                    <label for="input-count">First Name</label>
+                    {{ form.FirstName }}
+                </div>
+                 <div class="form-group">
+                    <label for="input-count">Last Name</label>
+                    {{ form.LastName }}
+                </div>
+     </div>
+     <div class="col">
+         <div class="form-group">
+             <label for="input-count">Seria and Number Pass</label>
+             {{ form.S }}
+         </div>
+
+         <div class="form-group">
+             <label for="input-count">DD/MM</label>
+             {{ form.Month }}<span>/</span>{{ form.Year }}
+         </div>
+
+           <div class="form-group">
+             <label for="input-count">CVC2/CVV2</label>
+             {{ form.CV }}
+         </div>
+     </div>
+ </div>
+ <a href="user/{{user.id}}"><button type="submit" class="btn btn-primary">Paid</button></a>
+ </form>
+{% endblock %}
+
+

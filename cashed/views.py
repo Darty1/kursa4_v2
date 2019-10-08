@@ -118,27 +118,51 @@ class RegisterView(View):
         return redirect(reverse('index'))
 
 
-class Paid_View(View):
-    def pay_st1(request, user_id, company_id):
-        from .forms import PaidForm_st_1
+def pay_st1(request, user_id, company_id):
+    from .forms import PaidForm_st_1
+    form = PaidForm_st_1(request.POST)
+    if request.method == 'POST':
+        price = request.POST.get('count')
+        print('price = ', request.POST.get('count'))
+        # if price is None:
+        #     return redirect(reverse('index'))
+        user = User.objects.get(id=user_id)
+        company = Company.objects.get(id=company_id)
+        transaction = Transaction(user_id=user_id, company_id=company_id, price=price)
+        transaction.save()
+        print('transaction_price = ', transaction.price)
         categorys = Category.objects.all()
-        company = Company.objects.get(id=company_id)
-        return render(request, 'pay_st1.html', {'form': PaidForm_st_1(), 'categorys': categorys, 'company': company})
+        form = PaidForm_st_1(request.POST)
+        return render(request, 'pay_st_1.html', {'categorys': categorys, 'form': form, 'error': True,
+                                                 'company': company, 'user': user})
+    else:
+        form = PaidForm_st_1
+    categorys = Category.objects.all()
+    company = Company.objects.filter(id=company_id)
+    user = User.objects.get(id=user_id)
+    return render(request, 'pay_st_1.html',
+                  {'form': form, 'categorys': categorys, 'company': company, 'user': user})
 
-    def pay_st2(request, user_id, company_id):
-        from .forms import PaidForm_st_2
-        company = Company.objects.get(id=company_id)
-        user = User.objects.get(user_id)
-        return render(request, 'pay_st_2.html', {'form': PaidForm_st_2(), 'company': company})
 
-    # def pay(request, company_id, user_id):
-    #     company = Company.objects.filter(id=company_id)
-    #     company.price -=
+def pay_st2(request, user_id, company_id):
+    from .forms import PaidForm_st_2
+    categorys = Category.objects.all()
+    company = Company.objects.get(id=company_id)
+    return render(request, 'pay_st_2.html', {'form': PaidForm_st_2, 'categorys': categorys, 'company': company})
+
+
+def pay_final(request, user_id, company_id):
+    company = Company.objects.get(id=company_id)
+    transaction = Transaction.objects.get(company_id=company_id, user_id=user_id)
+    company.price -= transaction.price
+    transaction.delete()
+    return redirect(reverse('index'))
 
 
 class UserUpdate(UpdateView):
     model = User
     fields = ['first_name', 'last_name', 'email', 'password']
     template_name_suffix = '_update'
+
     def get_success_url(self):
         return reverse('show')

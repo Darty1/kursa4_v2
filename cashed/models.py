@@ -59,3 +59,10 @@ class Consumer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True)
     wish_list = models.ManyToManyField(Company)
+
+
+class Transaction(models.Model):
+    price = models.DecimalField(max_digits=8, decimal_places=2, null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+

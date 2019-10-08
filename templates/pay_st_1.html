@@ -1,0 +1,19 @@
+{% extends 'index.html' %}
+
+{% block title %}paid{% endblock %}
+
+{% block content %}
+     <div class="container" style="width: 350px">
+<h2 align="center">Paid</h2>
+ <form action="{% url 'pay_st_2' user.id company.id %}" method="post">
+                <div class="form-group">
+                    {{ form.as_p }}
+                </div>
+                    <input  class="btn btn-primary" type="submit" value="Continue">
+                {% csrf_token %}
+ </form>
+     </div>
+{% endblock %}
+
+
+

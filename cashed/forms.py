@@ -12,7 +12,7 @@ class UserForm(Form):
 
 
 class PaidForm_st_1(Form):
-    count = DecimalField()
+    count = DecimalField(widget=NumberInput({'class': 'form-control'}))
 
 
 class PaidForm_st_2(Form):

@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+{% block content %}
+    <div class="container">
+    <div align="center">
+        <div style="background: linear-gradient(to right, lavender 0%, aliceblue 20%, #FFFFFF 100%); width: 400px; height: 320px; border: 6px outset darkblue; border-radius: 25px">
+    <h1>User update</h1>
+{#              <form action="{% url 'user_delete' pk=user.id  %}" method="get">#}
+{#                <button class="btn btn-secondary">Delete</button>#}
+{#            </form>#}
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update">
+</form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
