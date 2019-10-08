@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpRequest, Http404
+from django.http import HttpResponse, HttpRequest, Http404, HttpResponseNotFound
 # Create your views here.
 from django.urls import reverse
 from django.views import View
@@ -19,17 +19,19 @@ def new(request, user_id):
     from .forms import Create_Company
     form = Create_Company(request.POST)
     if request.method == 'POST':
-        name = request.POST.get('name')
-        price = request.POST.get('price')
-        author_id = user_id
-        date_of_end = request.POST.get('day_of_end')
-        category_id = request.POST.get('category_id')
-        description = request.POST.get('description')
-        image = request.POST.get('image')
-
-        company = Company(name=name, price=price, author_id=author_id, date_of_end=date_of_end,
-                          category_id=category_id, description=description, image=image)
-        company.save()
+        if form.is_valid():
+            form.save()
+        # name = request.POST.get('name')
+        # price = request.POST.get('price')
+        # author_id = user_id
+        # date_of_end = request.POST.get('date_of_end')
+        # category_id = request.POST.get('category_id')
+        # description = request.POST.get('description')
+        # image = request.POST.get('image')
+        #
+        # company = Company(name=name, price=price, author_id=author_id, date_of_end=date_of_end,
+        #                   category_id=category_id, description=description, image=image)
+        # company.save()
         users = User.objects.get(pk=user_id)
         categorys = Category.objects.all()
         companys = Company.objects.filter(author_id=users.id).values()
@@ -40,6 +42,28 @@ def new(request, user_id):
     return render(request, 'new.html', {'form': form, 'error': True, 'categorys': categorys})
 
 
+def add_bonus(request, company_id):
+    from .forms import CreateBonus
+    form = CreateBonus()
+    if request.method == 'POST':
+            name = request.POST.get('name')
+            price = request.POST.get('price')
+            description = request.POST.get('description_of_bonus')
+            date = request.POST.get('date')
+            company_id = company_id
+            bonus = Bonus(name=name, price=price, description_of_bonus=description,
+                              date=date, company_id=company_id)
+            bonus.save()
+            company = Company.objects.get(id=company_id)
+            categorys = Category.objects.all()
+            return render(request, 'company.html', {'company': company, 'categorys': categorys, 'form': form})
+            # return render(request, 'add_bonus.html', {'categorys': categorys,  'form': form})
+    else:
+        form = CreateBonus()
+        categorys = Category.objects.all()
+    return render(request, 'add_bonus.html', {'categorys': categorys,  'form': form})
+
+
 def logout(request: HttpRequest):
     from django.contrib.auth import logout
     logout(request)
@@ -47,34 +71,39 @@ def logout(request: HttpRequest):
 
 
 class Show(View):
-    def show(request, category_id: int):
+    def get(self, request, category_id):
         companys = Company.objects.filter(category_id=category_id)
         categorys = Category.objects.all()
         return render(request, 'show.html', {'companys': companys, 'categorys': categorys})
 
-    def show_all(request):
+
+class Show_all(View):
+    def get(self, request):
         companys = Company.objects.all()
         categorys = Category.objects.all()
         return render(request, 'show.html', {'companys': companys, 'categorys': categorys})
 
-    def company(request, company_id: int):
+
+class User_view(View):
+    def get(self, request, user_id):
+        users = User.objects.get(pk=user_id)
+        categorys = Category.objects.all()
+        companys = Company.objects.filter(author_id=users.id).values()
+        return render(request, 'user.html', {'users': users, 'companys': companys, 'categorys': categorys})
+
+
+class Show_Company(View):
+    def get(self, request, company_id: int):
         from django.db.models import ObjectDoesNotExist
         try:
             company = Company.objects.get(pk=company_id)
             bonuses = Bonus.objects.filter(company=company_id).values()
             categorys = Category.objects.all()
         except ObjectDoesNotExist:
-            return Http404()
+            return HttpResponseNotFound
         day_of_end = timezone.timedelta(company.date_of_end.day)
         return render(request, 'company.html',
                       {'company': company, 'bonuses': bonuses, 'day_of_end': day_of_end, 'categorys': categorys})
-
-    def user_view(request, user_id: int):
-        users = User.objects.get(pk=user_id)
-        categorys = Category.objects.all()
-        companys = Company.objects.filter(author_id=users.id).values()
-        return render(request, 'user.html', {'users': users, 'companys': companys, 'categorys': categorys})
-
 
 class LoginView(View):
     def get(self, request: HttpRequest) -> HttpResponse:

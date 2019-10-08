@@ -1,4 +1,3 @@
-import self as self
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -52,12 +51,10 @@ class Bonus(Named, Priced, City):
 
 
 class Consumer(models.Model):
-    class Meta(User.Meta):
+    class Meta:
         verbose_name = 'consumer'
         verbose_name_plural = 'consumers'
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    birth_date = models.DateField(null=True)
     wish_list = models.ManyToManyField(Company)
 
 
