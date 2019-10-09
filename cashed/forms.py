@@ -58,9 +58,9 @@ class Create_Company(ModelForm):
             'description': TextInput({'class': 'form-control'}),
             'date_of_end': DateInput({'class': 'form-control', 'placeholder': 'Select a date', 'type': 'date'}),
             'price': NumberInput({'class': 'form-control'}),
-            'image': FileInput({'class': 'form-control'}),
+            # 'image': FileInput({'class': 'form-control'}),
         }
-
+    image = ImageField(required=)
     category_id = MultipleChoiceField(required=False, choices=(('1', 'Arts'), ('2', 'Comics'), ('3', 'Tech'),
                                                                ('4', 'Film'), ('5', 'Food'), ('6', 'Games'),
                                                                ('7', 'Music'), ('8', 'Publishing')),

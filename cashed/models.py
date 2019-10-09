@@ -40,6 +40,7 @@ class Company(Named, Priced):
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True)
 
+
 class Bonus(Named, Priced, City):
     img = models.ImageField(upload_to='images/', null=True)
     description_of_bonus = models.TextField(null=True)

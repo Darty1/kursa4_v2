@@ -92,7 +92,8 @@ class User_view(View):
         users = User.objects.get(pk=user_id)
         categorys = Category.objects.all()
         companys = Company.objects.filter(author_id=users.id).values()
-        support_companys = Consumer.objects.get(user_id=user_id)
+        consumer = Consumer.objects.get(user_id=user_id)
+        support_companys = consumer.wish_list.all()
         return render(request, 'user.html', {'users': users, 'companys': companys,
                                              'support_companys': support_companys,
                                             'categorys': categorys})
@@ -148,6 +149,7 @@ class RegisterView(View):
             username = form.data['username']
             password = form.data['password']
             user = User.objects.create_user(username=username, password=password)
+            consumer = Consumer.objects.create(user_id=user.id)
         except:
             return render(request, 'registrable/register.html', {'form': UserForm(), 'error': True})
         login(request, user)
@@ -162,11 +164,12 @@ def pay_st1(request, user_id, company_id):
             price = request.POST.get('price')
             user = User.objects.get(id=user_id)
             if Consumer.objects.filter(user_id=user_id):
-                consumer = Consumer.objects.filter(user_id=user_id)
+                consumer = Consumer.objects.get(user_id=user_id)
             else:
                 consumer = Consumer.objects.create(user_id=user_id)
-            consumer.wish_list.create(consumer_id=user_id, company_id=company_id)
             company = Company.objects.get(id=company_id)
+            consumer.wish_list.add(company)
+            consumer.save()
             transaction = Transaction(user_id=user_id, company_id=company_id, price=price)
             transaction.save()
             categorys = Category.objects.all()
@@ -211,8 +214,9 @@ class UserUpdate(UpdateView):
 
 class CompanyUpdate(UpdateView):
     model = Company
-    fields = ['name', 'price', 'image', 'description', 'date_of_end', 'category_id']
+    fields = ['name', 'price', 'image', 'description', 'date_of_end']
     template_name_suffix = '_update'
+
 
     def get_success_url(self):
         return reverse('index')

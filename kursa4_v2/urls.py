@@ -36,7 +36,7 @@ urlpatterns = [
     re_path(r'show/(?P<category_id>\d+)/$', views.Show.as_view(), name='show'),
     path('show_all/', views.Show_all.as_view(), name='show_all'),
     re_path(r'user_update/(?P<pk>\d+)/$', views.UserUpdate.as_view(), name='user_update'),
-    re_path(r'user_update/(?P<pk>\d+)/$', views.CompanyUpdate.as_view(), name='company_update'),
+    re_path(r'company_update/(?P<pk>\d+)/$', views.CompanyUpdate.as_view(), name='company_update'),
     re_path(r'(?P<company_id>\d+)/add_bonus/$', views.add_bonus, name='add_bonus'),
 ]
 if settings.DEBUG:
