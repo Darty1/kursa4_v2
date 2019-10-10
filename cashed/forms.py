@@ -60,7 +60,7 @@ class Create_Company(ModelForm):
             'price': NumberInput({'class': 'form-control'}),
             # 'image': FileInput({'class': 'form-control'}),
         }
-    image = ImageField(required=)
+    image = ImageField()
     category_id = MultipleChoiceField(required=False, choices=(('1', 'Arts'), ('2', 'Comics'), ('3', 'Tech'),
                                                                ('4', 'Film'), ('5', 'Food'), ('6', 'Games'),
                                                                ('7', 'Music'), ('8', 'Publishing')),
